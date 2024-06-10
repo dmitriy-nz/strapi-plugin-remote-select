@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-remote-select",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "A powerful tool that adds select type inputs to your strapi with the ability to dynamically load options via API. Supports static and searchable endpoints—autocomplete.",
   "keywords": [
     "strapi select",
@@ -58,5 +58,13 @@
     "develop": "tsc -p tsconfig.server.json -w",
     "build": "tsc -p tsconfig.server.json"
   },
+  "files": [
+    "dist",
+    "admin",
+    "types",
+    "logo.svg",
+    "strapi-admin.js",
+    "strapi-server.js"
+  ],
   "license": "MIT"
 }
