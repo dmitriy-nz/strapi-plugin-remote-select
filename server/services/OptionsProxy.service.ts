@@ -7,6 +7,7 @@ import { SearchableRemoteSelectValue } from "../../types/SearchableRemoteSelectV
 export default ({ strapi }: { strapi: Strapi }) => ({
   async getOptionsByConfig(config: RemoteSelectFetchOptions) {
     const res = await fetch(config.fetch.url, {
+      method: config.fetch.method,
       headers: this.parseStringHeaders(config.fetch.headers),
       body: config.fetch.body,
     });
@@ -18,7 +19,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   parseStringHeaders(headers?: string): Record<string, string> {
     if (!headers) return {};
 
-    const result = {};
+    const result: Record<string, string> = {};
 
     const headersArr = this.trim(headers).split("\n");
 
@@ -30,10 +31,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       if (typeof result[key] === "undefined") {
         result[key] = value;
-      } else if (Array.isArray(result[key])) {
-        result[key].push(value);
       } else {
-        result[key] = [result[key], value];
+        result[key] = `${result[key]}, ${value}`;
       }
     }
 

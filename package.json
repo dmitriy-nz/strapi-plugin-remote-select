@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-remote-select",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A powerful tool that adds select type inputs to your strapi with the ability to dynamically load options via API. Supports static and searchable endpoints—autocomplete.",
   "keywords": [
     "strapi select",
@@ -56,7 +56,8 @@
   },
   "scripts": {
     "develop": "tsc -p tsconfig.server.json -w",
-    "build": "tsc -p tsconfig.server.json"
+    "build": "tsc -p tsconfig.server.json",
+    "prettier:write": "prettier --write ."
   },
   "files": [
     "dist",
