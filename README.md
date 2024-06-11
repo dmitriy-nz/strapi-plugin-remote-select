@@ -25,8 +25,13 @@ Simply transferring the value is not an option, as the values can change dynamic
 and the native Select has the same value as the one displayed to the user, which is not always convenient.
 That's why I was inspired to create this module, which solves this problem, you just need to add the desired input and configure it and that's it, you will always get the latest options, and the ability to use the searchable API or auto-complete significantly expands the use cases for this module.
 
-## ⏳ Installation
 
+## ⚠️ Requirements
+
+`"node": ">=18.0.0 <=20.x.x"`
+`"@strapi/strapi": "^4.24.5"`
+
+## ⏳ Installation
 ```bash
 # using yarn
 yarn add strapi-plugin-remote-select
