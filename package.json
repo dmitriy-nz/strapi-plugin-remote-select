@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-remote-select",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A powerful tool that adds select type inputs to your strapi with the ability to dynamically load options via API. Supports static and searchable endpoints—autocomplete.",
   "keywords": [
     "strapi select",
