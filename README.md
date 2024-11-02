@@ -1,8 +1,6 @@
-##
 
-<p align="center">
-  <img src="logo.svg" alt="Strapi Remote Select logo"/>
-</p>
+![Remote select](https://github.com/dmitriy-nz/strapi-plugin-remote-select/raw/main/logo.svg)
+
 
 A powerful tool that adds select type inputs to your strapi with the ability to dynamically load options via API.
 Supports static and searchable endpoints—autocomplete.
@@ -82,7 +80,7 @@ Depends on `multi` option you will have in the model a single string from select
 
 Basic configuration window:
 
-![Remote select settings window](screenshots/remote-select-settings.png)
+![Remote select settings window](https://github.com/dmitriy-nz/strapi-plugin-remote-select/raw/main/screenshots/remote-select-settings.png)
 
 for example, let's consider the next api endpoint 'https://dummyjson.com/products' with response structure:
 
@@ -117,15 +115,15 @@ for example, let's consider the next api endpoint 'https://dummyjson.com/product
 Configured remote select window will look like that:
 _We are going to use `id` field from a product object as value and `title` field as label_
 
-![Remote select example configured settings window](screenshots/remote-select-configured-window.png)
+![Remote select example configured settings window](https://github.com/dmitriy-nz/strapi-plugin-remote-select/raw/main/screenshots/remote-select-configured-window.png)
 
 and as a result, we have: (single mode)
 
-![Remote select single input](screenshots/remote-select-input.single.png)
+![Remote select single input](https://github.com/dmitriy-nz/strapi-plugin-remote-select/raw/main/screenshots/remote-select-input.single.png)
 
 multiple mode:
 
-![Remote select multi input](screenshots/remote-select-input.multiple.png)
+![Remote select multi input](https://github.com/dmitriy-nz/strapi-plugin-remote-select/raw/main/screenshots/remote-select-input.multiple.png)
 
 ### Searchable remote select input
 
@@ -156,18 +154,18 @@ or JSON string with the array of objects:
 Basic configuration window:
 It's the same as in Remote select input:
 
-![Remote select settings window](screenshots/searchable-remote-select-settings.png)
+![Remote select settings window](https://github.com/dmitriy-nz/strapi-plugin-remote-select/raw/main/screenshots/searchable-remote-select-input.single.gif)
 
 for example, let's consider the next api endpoint with search ability 'https://dummyjson.com/products/search?q=searchphrase' with the same response structure like as in Remote select example.
 
 Configured remote select window will look like that:
 
-![Searchable remote select configured window](screenshots/searchable-remote-select-configured-window.png)
+![Searchable remote select configured window](https://github.com/dmitriy-nz/strapi-plugin-remote-select/raw/main/screenshots/searchable-remote-select-configured-window.png)
 
 and as a result, we have: (single mode)
 
-![Searchable remote select single](screenshots/searchable-remote-select-input.single.gif)
+![Searchable remote select single](https://github.com/dmitriy-nz/strapi-plugin-remote-select/raw/main/screenshots/searchable-remote-select-input.single.gif)
 
 multiple mode:
 
-![Searchable remote select multi input](screenshots/searchable-remote-select-input.multiple.gif)
+![Searchable remote select multi input](https://github.com/dmitriy-nz/strapi-plugin-remote-select/raw/main/screenshots/searchable-remote-select-input.multiple.gif)
