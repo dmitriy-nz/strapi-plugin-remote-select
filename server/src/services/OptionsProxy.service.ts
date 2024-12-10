@@ -1,10 +1,10 @@
-import { Strapi } from "@strapi/strapi";
-import * as jp from "jsonpath";
-import { FlexibleSelectMappingConfig } from "../../types/FlexibleSelectConfig";
-import { RemoteSelectFetchOptions } from "../../types/RemoteSelectFetchOptions";
-import { SearchableRemoteSelectValue } from "../../types/SearchableRemoteSelectValue";
+import { Core } from '@strapi/strapi';
+import { query } from 'jsonpath';
+import type { FlexibleSelectMappingConfig } from '../../../types/FlexibleSelectConfig';
+import type { RemoteSelectFetchOptions } from '../../../types/RemoteSelectFetchOptions';
+import { SearchableRemoteSelectValue } from '../../../types/SearchableRemoteSelectValue';
 
-export default ({ strapi }: { strapi: Strapi }) => ({
+export const OptionsProxyService = ({ strapi }: { strapi: Core.Strapi }) => ({
   async getOptionsByConfig(config: RemoteSelectFetchOptions) {
     const res = await fetch(config.fetch.url, {
       method: config.fetch.method,
@@ -21,15 +21,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
     const result: Record<string, string> = {};
 
-    const headersArr = this.trim(headers).split("\n");
+    const headersArr = this.trim(headers).split('\n');
 
     for (let i = 0; i < headersArr.length; i++) {
       const row = headersArr[i];
-      const index = row.indexOf(":"),
+      const index = row.indexOf(':'),
         key = this.trim(row.slice(0, index)).toLowerCase(),
         value = this.trim(row.slice(index + 1));
 
-      if (typeof result[key] === "undefined") {
+      if (typeof result[key] === 'undefined') {
         result[key] = value;
       } else {
         result[key] = `${result[key]}, ${value}`;
@@ -40,20 +40,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
 
   trim(val: string): string {
-    return val.replace(/^\s+|\s+$/g, "");
+    return val.replace(/^\s+|\s+$/g, '');
   },
 
   parseOptions(
     response: any,
-    mappingConfig: FlexibleSelectMappingConfig,
+    mappingConfig: FlexibleSelectMappingConfig
   ): SearchableRemoteSelectValue[] {
     /**
      * Query options for mapping JSON response.
      */
-    const options = (jp as any).default.query(
-      response,
-      mappingConfig.sourceJsonPath || "$",
-    );
+    const options = query(response, mappingConfig.sourceJsonPath || '$');
 
     /**
      * Filter and map options array to prepare options with value and label.
@@ -64,7 +61,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const preparedOptionsArray = options
       .filter((item: any) => item !== undefined && item !== null)
       .map((option: any) => {
-        if (typeof option !== "object") {
+        if (typeof option !== 'object') {
           return {
             value: option,
             label: option,
@@ -87,16 +84,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
      */
     const uniqueValuesOptionsMap: Map<string, SearchableRemoteSelectValue> =
       preparedOptionsArray.reduce(
-        (
-          store: Map<string, SearchableRemoteSelectValue>,
-          option: SearchableRemoteSelectValue,
-        ) => {
+        (store: Map<string, SearchableRemoteSelectValue>, option: SearchableRemoteSelectValue) => {
           if (!store.has(option.value)) {
             store.set(option.value, option);
           }
           return store;
         },
-        new Map<string, SearchableRemoteSelectValue>(),
+        new Map<string, SearchableRemoteSelectValue>()
       );
 
     /**
@@ -115,10 +109,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
    * @return {string} The value of the item as a string.
    */
   getOptionItem(rawOption: any, jsonPath?: string): string {
-    const value = (jp as any).default.query(rawOption, jsonPath || "$", 1)?.[0];
+    const value = query(rawOption, jsonPath || '$', 1)?.[0];
 
-    if (typeof value !== "string") {
-      if (typeof value === "number") {
+    if (typeof value !== 'string') {
+      if (typeof value === 'number') {
         return value.toString();
       } else {
         return JSON.stringify(value);
@@ -128,3 +122,4 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     return value;
   },
 });
+export default OptionsProxyService;

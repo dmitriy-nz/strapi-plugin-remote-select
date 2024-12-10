@@ -1,6 +1,3 @@
-import { FlexibleSelectConfig } from "./FlexibleSelectConfig";
+import { FlexibleSelectConfig } from './FlexibleSelectConfig';
 
-export type RemoteSelectFetchOptions = Pick<
-  FlexibleSelectConfig,
-  "fetch" | "mapping"
->;
+export type RemoteSelectFetchOptions = Pick<FlexibleSelectConfig, 'fetch' | 'mapping'>;

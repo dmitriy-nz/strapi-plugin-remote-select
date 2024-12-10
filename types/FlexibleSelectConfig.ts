@@ -6,7 +6,7 @@ export interface FlexibleSelectConfig {
 
 export interface FlexibleSelectFetchConfig {
   url: string;
-  method: "GET" | "POST" | "PUT";
+  method: 'GET' | 'POST' | 'PUT';
   body?: string;
   headers?: string;
 }

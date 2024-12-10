@@ -1,37 +1,40 @@
-import { Option, Select } from "@strapi/design-system/Select";
-import { Stack } from "@strapi/design-system/Stack";
-import { useEffect, useMemo, useState } from "react";
-import { useIntl } from "react-intl";
-import { FlexibleSelectConfig } from "../../../../types/FlexibleSelectConfig";
-import { SearchableRemoteSelectValue } from "../../../../types/SearchableRemoteSelectValue";
+import {
+  Field,
+  MultiSelect,
+  MultiSelectOption,
+  SingleSelect,
+  SingleSelectOption,
+} from '@strapi/design-system';
+import { useEffect, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { FlexibleSelectConfig } from '../../../../types/FlexibleSelectConfig';
+import { SearchableRemoteSelectValue } from '../../../../types/SearchableRemoteSelectValue';
 
 export default function RemoteSelect({
   value,
   onChange,
   name,
-  intlLabel,
+  label,
   required,
   attribute,
-  description,
+  hint,
   placeholder,
   disabled,
   error,
 }: any) {
-  placeholder = placeholder ?? {
-    id: "remote-select.select.placeholder",
-    defaultMessage: "Select a value",
+  const defaultPlaceholder = {
+    id: 'remote-select.select.placeholder',
+    defaultMessage: 'Select a value',
   };
   const selectConfiguration: FlexibleSelectConfig = attribute.options;
 
   const { formatMessage } = useIntl();
   const isMulti = useMemo<boolean>(
     () => !!selectConfiguration.select?.multi,
-    [selectConfiguration],
+    [selectConfiguration]
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [options, setOptions] = useState<Array<SearchableRemoteSelectValue>>(
-    [],
-  );
+  const [options, setOptions] = useState<Array<SearchableRemoteSelectValue>>([]);
   const [optionsLoadingError, setLoadingError] = useState<any | undefined>();
 
   const valueParsed = useMemo<string | string[]>(() => {
@@ -57,21 +60,21 @@ export default function RemoteSelect({
   async function loadOptions(): Promise<void> {
     setIsLoading(true);
     try {
-      const res = await fetch("/remote-select/options-proxy", {
-        method: "POST",
+      const res = await fetch('/remote-select/options-proxy', {
+        method: 'POST',
         body: JSON.stringify({
           fetch: selectConfiguration.fetch,
           mapping: selectConfiguration.mapping,
         }),
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
       if (res.status === 200) {
         setOptions(await res.json());
       } else {
-        setLoadingError(res.statusText + ", code:  " + res.status);
+        setLoadingError(res.statusText + ', code:  ' + res.status);
       }
     } catch (err) {
       setLoadingError((err as any)?.message || err?.toString());
@@ -99,36 +102,41 @@ export default function RemoteSelect({
   }
 
   const optionsList = options.map((opt) => {
-    return (
-      <Option value={opt.value} key={opt.value}>
+    return isMulti ? (
+      <MultiSelectOption value={opt.value} key={opt.value}>
         {opt.label}
-      </Option>
+      </MultiSelectOption>
+    ) : (
+      <SingleSelectOption value={opt.value} key={opt.value}>
+        {opt.label}
+      </SingleSelectOption>
     );
   });
 
+  const SelectToRender = isMulti ? MultiSelect : SingleSelect;
+
   return (
-    <Stack spacing={1}>
-      <Select
-        multi={!!selectConfiguration.select?.multi}
-        withTags={!!selectConfiguration.select?.multi}
-        placeholder={formatMessage(placeholder)}
-        hint={description && formatMessage(description)}
-        label={formatMessage(intlLabel)}
+    <Field.Root name={name} hint={hint} required={required} error={error}>
+      <Field.Label>{label}</Field.Label>
+      <SelectToRender
+        withTags={isMulti}
+        placeholder={placeholder || formatMessage(defaultPlaceholder)}
+        aria-label={label}
         name={name}
         onChange={handleChange}
         value={valueParsed}
         disabled={disabled}
-        error={
-          error ||
-          (optionsLoadingError &&
-            `Options loading error: ${optionsLoadingError}`)
-        }
+        error={error}
         required={required}
         onClear={clear}
         loading={isLoading ?? true}
       >
+        {optionsLoadingError &&
+          `Options loading error: ${optionsLoadingError}. Please check the field configuration`}
         {optionsList}
-      </Select>
-    </Stack>
+      </SelectToRender>
+      <Field.Error />
+      <Field.Hint />
+    </Field.Root>
   );
 }

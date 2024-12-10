@@ -1,72 +1,88 @@
 {
-  "name": "strapi-plugin-remote-select",
-  "version": "1.0.6",
-  "description": "A powerful tool that adds select type inputs to your strapi with the ability to dynamically load options via API. Supports static and searchable endpoints—autocomplete.",
+  "version": "2.0.1",
   "keywords": [
     "strapi select",
     "strapi multi selects",
     "strapi input",
     "strapi select fetch options"
   ],
+  "type": "commonjs",
+  "exports": {
+    "./package.json": "./package.json",
+    "./strapi-admin": {
+      "types": "./dist/admin/src/index.d.ts",
+      "source": "./admin/src/index.ts",
+      "import": "./dist/admin/index.mjs",
+      "require": "./dist/admin/index.js",
+      "default": "./dist/admin/index.js"
+    },
+    "./strapi-server": {
+      "types": "./dist/server/src/index.d.ts",
+      "source": "./server/src/index.ts",
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.js",
+      "default": "./dist/server/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "strapi-plugin build",
+    "watch": "strapi-plugin watch",
+    "watch:link": "strapi-plugin watch:link",
+    "verify": "strapi-plugin verify",
+    "test:ts:front": "run -T tsc -p admin/tsconfig.json",
+    "test:ts:back": "run -T tsc -p server/tsconfig.json"
+  },
+  "dependencies": {
+    "@strapi/design-system": "^2.0.0-rc.12",
+    "@strapi/icons": "^2.0.0-rc.12",
+    "react-intl": "^6.8.4",
+    "jsonpath": "^1.1.1",
+    "lodash-es": "^4.17.21"
+  },
+  "devDependencies": {
+    "@strapi/strapi": "^5.2.0",
+    "@strapi/sdk-plugin": "^5.2.7",
+    "prettier": "^3.3.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.27.0",
+    "styled-components": "^6.1.13",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@strapi/typescript-utils": "^5.2.0",
+    "typescript": "^5.6.3",
+    "@types/jsonpath": "^0.2.4",
+    "@types/lodash-es": "^4.17.12",
+    "prettier-plugin-organize-imports": "^3.2.4"
+  },
+  "peerDependencies": {
+    "@strapi/strapi": "^5.2.0",
+    "@strapi/sdk-plugin": "^5.2.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.27.0",
+    "styled-components": "^6.1.13"
+  },
   "strapi": {
     "name": "remote-select",
     "description": "A powerful tool that adds select type inputs to your strapi with the ability to dynamically load options via API. Supports static and searchable endpoints—autocomplete.",
-    "kind": "plugin"
+    "kind": "plugin",
+    "displayName": "Remote select"
+  },
+  "name": "strapi-plugin-remote-select",
+  "description": "A powerful tool that adds select type inputs to your strapi with the ability to dynamically load options via API. Supports static and searchable endpoints—autocomplete.",
+  "license": "MIT",
+  "author": {
+    "name": "Dmytro Nazarenko"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/dmitriy-nz/strapi-plugin-remote-select.git"
   },
-  "dependencies": {
-    "@strapi/design-system": "^1.6.3",
-    "@strapi/helper-plugin": "^4.6.0",
-    "@strapi/icons": "^1.6.3",
-    "jsonpath": "^1.1.1",
-    "lodash-es": "^4.17.21",
-    "prop-types": "^15.7.2"
-  },
-  "devDependencies": {
-    "@strapi/typescript-utils": "^4.6.0",
-    "@types/jsonpath": "^0.2.4",
-    "@types/lodash-es": "^4.17.12",
-    "@types/react": "^17.0.53",
-    "@types/react-dom": "^18.0.28",
-    "@types/react-router-dom": "^5.3.3",
-    "@types/styled-components": "^5.1.26",
-    "prettier": "^3.2.5",
-    "prettier-plugin-organize-imports": "^3.2.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^5.3.4",
-    "styled-components": "^5.3.6",
-    "typescript": "5.0.4"
-  },
-  "peerDependencies": {
-    "@strapi/strapi": "^4.4.0",
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0",
-    "react-router-dom": "^5.2.0",
-    "styled-components": "^5.2.1"
-  },
-  "author": {
-    "name": "Dmytro Nazarenko"
-  },
   "engines": {
-    "node": ">=18.0.0 <=20.x.x",
-    "npm": ">=6.0.0"
-  },
-  "scripts": {
-    "develop": "tsc -p tsconfig.server.json -w",
-    "build": "tsc -p tsconfig.server.json",
-    "prettier:write": "prettier --write ."
-  },
-  "files": [
-    "dist",
-    "admin",
-    "types",
-    "logo.svg",
-    "strapi-admin.js",
-    "strapi-server.js"
-  ],
-  "license": "MIT"
+    "node": ">=18.0.0 <=20.x.x"
+  }
 }

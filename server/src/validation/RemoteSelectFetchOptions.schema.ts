@@ -1,4 +1,4 @@
-import * as yup from "yup";
+import * as yup from 'yup';
 
 export const RemoteSelectFetchOptionsSchema = yup.object().shape({
   fetch: yup.object().shape({

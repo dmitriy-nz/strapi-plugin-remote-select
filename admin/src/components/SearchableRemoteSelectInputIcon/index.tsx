@@ -5,13 +5,7 @@
  */
 
 const SearchableRemoteSelectIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="33"
-    height="25"
-    fill="none"
-    viewBox="0 0 33 25"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="33" height="25" fill="none" viewBox="0 0 33 25">
     <path
       fill="#80CBC4"
       stroke="#00796B"
