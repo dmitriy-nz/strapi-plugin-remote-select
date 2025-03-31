@@ -74,6 +74,9 @@ export default function SearchableRemoteSelect(attrs: any) {
           fetch: {
             ...selectConfiguration.fetch,
             url: selectConfiguration.fetch.url.replace('{q}', searchModel),
+            body:
+              selectConfiguration.fetch.body &&
+              selectConfiguration.fetch.body.replace('{q}', searchModel),
           },
           mapping: selectConfiguration.mapping,
         }),
