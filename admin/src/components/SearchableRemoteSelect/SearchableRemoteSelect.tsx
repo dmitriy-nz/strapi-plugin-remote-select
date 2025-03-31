@@ -1,51 +1,33 @@
-import {
-  Field,
-  FieldError,
-  FieldHint,
-  FieldLabel,
-  Flex,
-  Tag,
-} from "@strapi/design-system";
-import { Checkbox } from "@strapi/design-system/Checkbox";
-import Combobox from "@strapi/design-system/Combobox/Combobox";
-import { Stack } from "@strapi/design-system/Stack";
-import { Cross } from "@strapi/icons";
-import { debounce } from "lodash-es";
-import { useCallback, useEffect, useId, useMemo, useState } from "react";
-import { useIntl } from "react-intl";
-import { FlexibleSelectConfig } from "../../../../types/FlexibleSelectConfig";
-import { SearchableRemoteSelectValue } from "../../../../types/SearchableRemoteSelectValue";
+import { Field, FieldError, FieldHint, FieldLabel, Flex, Tag } from '@strapi/design-system';
+import { Checkbox } from '@strapi/design-system/Checkbox';
+import Combobox from '@strapi/design-system/Combobox/Combobox';
+import { Stack } from '@strapi/design-system/Stack';
+import { Cross } from '@strapi/icons';
+import { debounce } from 'lodash-es';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { FlexibleSelectConfig } from '../../../../types/FlexibleSelectConfig';
+import { SearchableRemoteSelectValue } from '../../../../types/SearchableRemoteSelectValue';
 
 export default function SearchableRemoteSelect(attrs: any) {
-  const {
-    name,
-    error,
-    description,
-    onChange,
-    value,
-    intlLabel,
-    attribute,
-    required,
-  } = attrs;
+  const { name, error, description, onChange, value, intlLabel, attribute, required } = attrs;
 
   const selectConfiguration: FlexibleSelectConfig = attribute.options;
 
   const generatedId = useId();
   const { formatMessage } = useIntl();
-  const [options, setOptions] = useState<Array<SearchableRemoteSelectValue>>(
-    [],
-  );
+  const [options, setOptions] = useState<Array<SearchableRemoteSelectValue>>([]);
   const [loadingError, setLoadingError] = useState<any>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isMulti = useMemo<boolean>(
     () => !!selectConfiguration.select?.multi,
-    [selectConfiguration],
+    [selectConfiguration]
   );
   const valueParsed = useMemo<
     SearchableRemoteSelectValue | SearchableRemoteSelectValue[] | undefined
   >(() => {
     if (isMulti) {
-      if (!value || value === "null") {
+      if (!value || value === 'null') {
         return [];
       }
 
@@ -62,9 +44,7 @@ export default function SearchableRemoteSelect(attrs: any) {
 
       try {
         const parseResult = JSON.parse(value);
-        const option = Array.isArray(parseResult)
-          ? parseResult[0]
-          : parseResult;
+        const option = Array.isArray(parseResult) ? parseResult[0] : parseResult;
         return !Object.keys(option).length ? undefined : option;
       } catch (err) {
         return undefined;
@@ -72,48 +52,46 @@ export default function SearchableRemoteSelect(attrs: any) {
     }
   }, [value]);
   const [searchModel, setSearchModel] = useState<string>(
-    valueParsed && isSingleParsed(valueParsed) ? valueParsed.label : "",
+    valueParsed && isSingleParsed(valueParsed) ? valueParsed.label : ''
   );
   const loadOptionsDebounced = useCallback(
     debounce((value: string) => {
       setIsLoading(true);
       loadOptions(value);
     }, 500),
-    [],
+    []
   );
 
   useEffect(() => {
-    loadOptionsDebounced(
-      valueParsed && isSingleParsed(valueParsed) ? valueParsed.label : "",
-    );
+    loadOptionsDebounced(valueParsed && isSingleParsed(valueParsed) ? valueParsed.label : '');
   }, []);
 
   async function loadOptions(searchModel: string): Promise<void> {
     try {
       const config = { ...selectConfiguration.fetch };
-      config.url = (config.url || "").replace("{q}", searchModel);
+      config.url = (config.url || '').replace('{q}', searchModel);
 
-      const res = await fetch(
-        window.location.origin + "/remote-select/options-proxy",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            fetch: {
-              ...selectConfiguration.fetch,
-              url: selectConfiguration.fetch.url.replace("{q}", searchModel),
-            },
-            mapping: selectConfiguration.mapping,
-          }),
-          headers: {
-            "Content-Type": "application/json",
+      const res = await fetch(window.location.origin + '/remote-select/options-proxy', {
+        method: 'POST',
+        body: JSON.stringify({
+          fetch: {
+            ...selectConfiguration.fetch,
+            url: selectConfiguration.fetch.url.replace('{q}', searchModel),
+            body:
+              selectConfiguration.fetch.body &&
+              selectConfiguration.fetch.body.replace('{q}', searchModel),
           },
+          mapping: selectConfiguration.mapping,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+      });
 
       if (res.status === 200) {
         setOptions(await res.json());
       } else {
-        setLoadingError(res.statusText + ", code:  " + res.status);
+        setLoadingError(res.statusText + ', code:  ' + res.status);
       }
     } catch (err) {
       setLoadingError((err as any)?.message || err?.toString());
@@ -131,17 +109,12 @@ export default function SearchableRemoteSelect(attrs: any) {
     }
 
     try {
-      const value: SearchableRemoteSelectValue = JSON.parse(
-        stringValueProjection,
-      );
+      const value: SearchableRemoteSelectValue = JSON.parse(stringValueProjection);
       if (isMulti) {
         if (!isInModel(value)) {
-          writeMultiModel([
-            ...(valueParsed as SearchableRemoteSelectValue[]),
-            value,
-          ]);
+          writeMultiModel([...(valueParsed as SearchableRemoteSelectValue[]), value]);
         }
-        handleTextValueChange("");
+        handleTextValueChange('');
       } else {
         writeSingleModel(value);
       }
@@ -150,11 +123,7 @@ export default function SearchableRemoteSelect(attrs: any) {
 
   function handleTextValueChange(val: string): void {
     setSearchModel(val);
-    if (
-      valueParsed &&
-      isSingleParsed(valueParsed) &&
-      valueParsed.label !== val
-    ) {
+    if (valueParsed && isSingleParsed(valueParsed) && valueParsed.label !== val) {
       handleChange(undefined);
     }
 
@@ -163,18 +132,18 @@ export default function SearchableRemoteSelect(attrs: any) {
 
   function handleOpenChange() {
     if (isMulti) {
-      setSearchModel("");
+      setSearchModel('');
     }
   }
 
   function isSingleParsed(
-    val: SearchableRemoteSelectValue | SearchableRemoteSelectValue[],
+    val: SearchableRemoteSelectValue | SearchableRemoteSelectValue[]
   ): val is SearchableRemoteSelectValue {
     return !isMulti;
   }
 
   function isMultiParsed(
-    val: SearchableRemoteSelectValue | SearchableRemoteSelectValue[],
+    val: SearchableRemoteSelectValue | SearchableRemoteSelectValue[]
   ): val is SearchableRemoteSelectValue[] {
     return isMulti;
   }
@@ -200,11 +169,7 @@ export default function SearchableRemoteSelect(attrs: any) {
         name,
         type: attribute.type,
         value:
-          value && value.length
-            ? JSON.stringify(value)
-            : required
-              ? undefined
-              : JSON.stringify([]),
+          value && value.length ? JSON.stringify(value) : required ? undefined : JSON.stringify([]),
       },
     });
   }
@@ -214,11 +179,7 @@ export default function SearchableRemoteSelect(attrs: any) {
       target: {
         name,
         type: attribute.type,
-        value: value
-          ? JSON.stringify(value)
-          : required
-            ? undefined
-            : JSON.stringify({}),
+        value: value ? JSON.stringify(value) : required ? undefined : JSON.stringify({}),
       },
     });
   }
@@ -246,7 +207,7 @@ export default function SearchableRemoteSelect(attrs: any) {
 
   const selectedValuesTags =
     valueParsed && isMultiParsed(valueParsed) ? (
-      <div style={{ marginTop: ".5rem" }}>
+      <div style={{ marginTop: '.5rem' }}>
         <Flex wrap="wrap" gap={1}>
           {valueParsed.map((option) => (
             <Tag
@@ -265,7 +226,7 @@ export default function SearchableRemoteSelect(attrs: any) {
   return (
     <Stack spacing={1}>
       <Field
-        hint={description ? formatMessage(description) : ""}
+        hint={description ? formatMessage(description) : ''}
         error={error}
         id={generatedId}
         required={required}
@@ -279,23 +240,20 @@ export default function SearchableRemoteSelect(attrs: any) {
             allowCustomValue
             autocomplete="none"
             id={generatedId}
-            error={
-              error ||
-              (loadingError && `Options loading error: ${loadingError}`)
-            }
+            error={error || (loadingError && `Options loading error: ${loadingError}`)}
             loading={isLoading}
             placeholder={formatMessage({
-              id: "remote-select.searchable-select.placeholder",
-              defaultMessage: "Search a new values",
+              id: 'remote-select.searchable-select.placeholder',
+              defaultMessage: 'Search a new values',
             })}
             loadingMessage={formatMessage({
-              id: "remote-select.select.loading-message",
-              defaultMessage: "Loading...",
+              id: 'remote-select.select.loading-message',
+              defaultMessage: 'Loading...',
             })}
             noOptionsMessage={() =>
               formatMessage({
-                id: "remote-select.searchable-select.no-results",
-                defaultMessage: "No results for your query",
+                id: 'remote-select.searchable-select.no-results',
+                defaultMessage: 'No results for your query',
               })
             }
             onTextValueChange={handleTextValueChange}
