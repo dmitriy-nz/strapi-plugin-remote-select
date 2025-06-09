@@ -8,7 +8,7 @@ export function registerRemoteSelect(app: StrapiApp): void {
   app.customFields.register({
     name: 'remote-select',
     pluginId: pluginId,
-    type: 'string',
+    type: "text",
     intlLabel: {
       id: getTrad('remote-select.label'),
       defaultMessage: 'Remote select',

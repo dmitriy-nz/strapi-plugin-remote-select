@@ -1,4 +1,8 @@
+import { RemoteSelectPluginOptions } from '../../../types/RemoteSelectPluginOptions';
+
 export default {
-  default: {},
+  default: {
+    variables: {},
+  } as RemoteSelectPluginOptions,
   validator() {},
 };
