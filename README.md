@@ -74,6 +74,41 @@ Advanced settings:
 | Multi mode    | `string` |             |
 | Private field | `string` |             |
 
+
+## Variables in API Requests
+The plugin now supports using variables in your API URLs, headers, and request bodies.
+This allows for dynamic configuration of your API requests.
+
+### Setting up variables
+Add variables to your plugin configuration in `config/plugins.js`:
+
+``` js
+module.exports = {
+  "remote-select": {
+    enabled: true,
+    variables: {
+      apiBaseUrl: "https://api.example.com",
+      apiVersion: "v2",
+      authToken: "your-auth-token"
+    }
+  },
+};
+```
+
+### Using variables
+You can use variables in your configuration by surrounding the variable name with curly braces:
+- In API URLs: `{apiBaseUrl}/products/{apiVersion}/list`
+- In request headers: `Authorization: Bearer {authToken}`
+- In request bodies: `{ "version": "{apiVersion}" }`
+
+Variables provide a convenient way to:
+- Manage environment-specific API endpoints
+- Share authentication tokens across multiple select configurations
+- Update common values in one place instead of modifying each select configuration
+
+If a variable isn't defined in your configuration, the placeholder will remain unchanged in the request.
+
+
 ### Remote select input
 
 Depends on `multi` option you will have in the model a single string from selected `value` option or array of selected `value` string.
@@ -169,3 +204,4 @@ and as a result, we have: (single mode)
 multiple mode:
 
 ![Searchable remote select multi input](https://github.com/dmitriy-nz/strapi-plugin-remote-select/raw/main/screenshots/searchable-remote-select-input.multiple.gif)
+
