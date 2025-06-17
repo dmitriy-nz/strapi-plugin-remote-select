@@ -5,12 +5,12 @@ export default ({ strapi }: { strapi: Strapi }) => {
   strapi.customFields.register({
     name: "remote-select",
     plugin: pluginId,
-    type: "string",
+    type: "text",
   });
 
   strapi.customFields.register({
     name: "searchable-remote-select",
     plugin: pluginId,
-    type: "string",
+    type: "text",
   });
 };
