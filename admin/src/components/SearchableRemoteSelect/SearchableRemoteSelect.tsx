@@ -20,6 +20,10 @@ export default function SearchableRemoteSelect(attrs: any) {
     () => !!selectConfiguration.select?.multi,
     [selectConfiguration]
   );
+  const useMetadataSlug = useMemo<boolean>(
+    () => !!selectConfiguration.select?.metadataSlug && !isMulti,
+    [selectConfiguration, isMulti]
+  );
   const valueParsed = useMemo<
     SearchableRemoteSelectValue | SearchableRemoteSelectValue[] | undefined
   >(() => {
@@ -39,6 +43,17 @@ export default function SearchableRemoteSelect(attrs: any) {
         return undefined;
       }
 
+      // Handle metadata slug mode (string value)
+      if (useMetadataSlug && typeof value === 'string') {
+        try {
+          // Check if it's actually JSON - if not, treat as string value
+          JSON.parse(value);
+        } catch (err) {
+          // It's a plain string, create a SearchableRemoteSelectValue
+          return { value, label: value };
+        }
+      }
+
       try {
         const parseResult = JSON.parse(value);
         const option = Array.isArray(parseResult) ? parseResult[0] : parseResult;
@@ -47,7 +62,7 @@ export default function SearchableRemoteSelect(attrs: any) {
         return undefined;
       }
     }
-  }, [value]);
+  }, [value, useMetadataSlug]);
   const [searchModel, setSearchModel] = useState<string>(
     valueParsed && isSingleParsed(valueParsed) ? valueParsed.label : ''
   );
@@ -122,8 +137,11 @@ export default function SearchableRemoteSelect(attrs: any) {
 
   function handleTextValueChange(val: string): void {
     setSearchModel(val);
-    if (valueParsed && isSingleParsed(valueParsed) && valueParsed.label !== val) {
-      handleChange(undefined);
+    if (valueParsed && isSingleParsed(valueParsed)) {
+      const currentLabel = useMetadataSlug && typeof value === 'string' ? value : valueParsed.label;
+      if (currentLabel !== val) {
+        handleChange(undefined);
+      }
     }
 
     loadOptionsDebounced(val);
@@ -173,11 +191,21 @@ export default function SearchableRemoteSelect(attrs: any) {
   }
 
   function writeSingleModel(value?: SearchableRemoteSelectValue): void {
+    let finalValue: string | undefined;
+    
+    if (!value) {
+      finalValue = required ? undefined : (useMetadataSlug ? '' : JSON.stringify({}));
+    } else if (useMetadataSlug) {
+      finalValue = value.value;
+    } else {
+      finalValue = JSON.stringify(value);
+    }
+    
     onChange({
       target: {
         name,
         type: attribute.type,
-        value: value ? JSON.stringify(value) : required ? undefined : JSON.stringify({}),
+        value: finalValue,
       },
     });
   }

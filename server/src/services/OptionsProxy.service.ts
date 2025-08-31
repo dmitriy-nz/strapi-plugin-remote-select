@@ -15,14 +15,20 @@ export const OptionsProxyService = ({ strapi }: { strapi: Core.Strapi }) => ({
    * @return  A promise that resolves to the processed options extracted and mapped from the response.
    */
   async getOptionsByConfig(config: RemoteSelectFetchOptions) {
-    const res = await fetch(this.replaceVariables(config.fetch.url), {
+    const fetchOptions: RequestInit = {
       method: config.fetch.method,
-      headers: this.parseStringHeaders(config.fetch.headers),
-      body: config.fetch.body ? this.replaceVariables(config.fetch.body) : null,
-    });
+      headers: this.parseStringHeaders(config.fetch.headers)
+    };
+  
+    // Only add body for methods that support it (not GET/HEAD)
+    if (config.fetch.method &&
+        !['GET', 'HEAD'].includes(config.fetch.method.toUpperCase()) &&
+        config.fetch.body) {
+      fetchOptions.body = this.replaceVariables(config.fetch.body);
+    }
 
+    const res = await fetch(this.replaceVariables(config.fetch.url), fetchOptions);
     const response = await res.json();
-
     return this.parseOptions(response, config.mapping);
   },
 
@@ -158,7 +164,7 @@ export const OptionsProxyService = ({ strapi }: { strapi: Core.Strapi }) => ({
    */
   replaceVariables(str: string): string {
     const variables =
-      strapi.config.get<RemoteSelectPluginOptions>('plugin.remote-select')?.variables ?? {};
+      strapi.config.get<RemoteSelectPluginOptions>('plugin::remote-select')?.variables ?? {};
 
     if (!str || typeof str !== 'string') {
       return str;

@@ -209,9 +209,25 @@ export function getRemoteSelectRegisterOptions(type: SelectType): CustomFieldOpt
             },
             description: getTranslationBySelectType(translationsOptions.multiModeDescription, type),
           },
+          ...(type === 'searchable'
+            ? [
+                {
+                  name: 'options.select.metadataSlug' as any,
+                  type: 'checkbox' as any,
+                  intlLabel: {
+                    id: getTrad('select.metadata-slug-label'),
+                    defaultMessage: 'Metadata Slug',
+                  },
+                  description: {
+                    id: getTrad('select.metadata-slug-description'),
+                    defaultMessage: 'Store only the value as string (not JSON). Only works in single mode.',
+                  },
+                },
+              ]
+            : []),
           {
             name: 'required',
-            type: 'checkbox',
+            type: 'checkbox' as any,
             intlLabel: {
               id: 'form.attribute.item.requiredField',
               defaultMessage: 'Required field',
@@ -223,7 +239,7 @@ export function getRemoteSelectRegisterOptions(type: SelectType): CustomFieldOpt
           },
           {
             name: 'private',
-            type: 'checkbox',
+            type: 'checkbox' as any,
             intlLabel: {
               id: 'form.attribute.item.private',
               defaultMessage: 'Private field',
