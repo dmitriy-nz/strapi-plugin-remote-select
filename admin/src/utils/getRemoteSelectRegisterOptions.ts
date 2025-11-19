@@ -212,15 +212,15 @@ export function getRemoteSelectRegisterOptions(type: SelectType): CustomFieldOpt
           ...(type === 'searchable'
             ? [
                 {
-                  name: 'options.select.metadataSlug' as any,
+                  name: 'options.select.saveLabel' as any,
                   type: 'checkbox' as any,
                   intlLabel: {
-                    id: getTrad('select.metadata-slug-label'),
-                    defaultMessage: 'Metadata Slug',
+                    id: getTrad('select.save-label-label'),
+                    defaultMessage: 'Save Label',
                   },
                   description: {
-                    id: getTrad('select.metadata-slug-description'),
-                    defaultMessage: 'Store only value(s) without labels. Single mode: string, Multi mode: JSON array of strings.',
+                    id: getTrad('select.save-label-description'),
+                    defaultMessage: 'When enabled, save both value and label. When disabled (default), save only value. Single mode: string vs JSON object. Multi mode: JSON array of strings vs JSON array of objects.',
                   },
                 },
               ]

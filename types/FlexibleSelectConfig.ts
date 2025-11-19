@@ -19,5 +19,5 @@ export interface FlexibleSelectMappingConfig {
 
 export interface FlexibleSelectSelectConfig {
   multi: boolean;
-  metadataSlug?: boolean;
+  saveLabel?: boolean;
 }
