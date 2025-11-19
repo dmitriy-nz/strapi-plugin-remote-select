@@ -220,7 +220,7 @@ export function getRemoteSelectRegisterOptions(type: SelectType): CustomFieldOpt
                   },
                   description: {
                     id: getTrad('select.metadata-slug-description'),
-                    defaultMessage: 'Store only the value as string (not JSON). Only works in single mode.',
+                    defaultMessage: 'Store only value(s) without labels. Single mode: string, Multi mode: JSON array of strings.',
                   },
                 },
               ]

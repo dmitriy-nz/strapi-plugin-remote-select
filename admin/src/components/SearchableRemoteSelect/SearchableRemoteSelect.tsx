@@ -21,8 +21,8 @@ export default function SearchableRemoteSelect(attrs: any) {
     [selectConfiguration]
   );
   const useMetadataSlug = useMemo<boolean>(
-    () => !!selectConfiguration.select?.metadataSlug && !isMulti,
-    [selectConfiguration, isMulti]
+    () => !!selectConfiguration.select?.metadataSlug,
+    [selectConfiguration]
   );
   const valueParsed = useMemo<
     SearchableRemoteSelectValue | SearchableRemoteSelectValue[] | undefined
@@ -34,7 +34,14 @@ export default function SearchableRemoteSelect(attrs: any) {
 
       try {
         const parseResult = JSON.parse(value);
-        return Array.isArray(parseResult) ? parseResult : [parseResult];
+        const arrayResult = Array.isArray(parseResult) ? parseResult : [parseResult];
+
+        // If metadataSlug is enabled and we have strings, convert to objects
+        if (useMetadataSlug && arrayResult.length > 0 && typeof arrayResult[0] === 'string') {
+          return arrayResult.map(val => ({ value: val, label: val }));
+        }
+
+        return arrayResult;
       } catch (err) {
         return [];
       }
@@ -62,7 +69,7 @@ export default function SearchableRemoteSelect(attrs: any) {
         return undefined;
       }
     }
-  }, [value, useMetadataSlug]);
+  }, [value, useMetadataSlug, isMulti]);
   const [searchModel, setSearchModel] = useState<string>(
     valueParsed && isSingleParsed(valueParsed) ? valueParsed.label : ''
   );
@@ -180,12 +187,16 @@ export default function SearchableRemoteSelect(attrs: any) {
   }
 
   function writeMultiModel(value?: SearchableRemoteSelectValue[]): void {
+    const finalValue = useMetadataSlug && value
+      ? value.map(v => v.value)
+      : value;
+
     onChange({
       target: {
         name,
         type: attribute.type,
         value:
-          value && value.length ? JSON.stringify(value) : required ? undefined : JSON.stringify([]),
+          finalValue && finalValue.length ? JSON.stringify(finalValue) : required ? undefined : JSON.stringify([]),
       },
     });
   }
