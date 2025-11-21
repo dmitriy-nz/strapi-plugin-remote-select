@@ -45,20 +45,20 @@ function SearchableRemoteSelectComponent(attrs: any) {
       // If saveLabel is true, array contains objects
       return value;
     } else {
-      // Single mode
+      // Single mode - with type: 'json', always expect object
       if (!value) {
         return undefined;
       }
 
-      // If saveLabel is false, value is a plain string
-      if (!useSaveLabel && typeof value === 'string') {
-        return { value: value.trim(), label: value.trim() };
-      }
-
-      // If saveLabel is true, value is an object
-      if (useSaveLabel && typeof value === 'object' && !Array.isArray(value)) {
+      if (typeof value === 'object' && !Array.isArray(value)) {
         if ('value' in value) {
-          return value as SearchableRemoteSelectValue;
+          // If object has value field, use it (works for both saveLabel true/false)
+          // For saveLabel=false: {value: "x"} → display as {value: "x", label: "x"}
+          // For saveLabel=true: {value: "x", label: "y"} → display as-is
+          return {
+            value: String(value.value).trim(),
+            label: value.label ? String(value.label).trim() : String(value.value).trim()
+          };
         }
         // Empty object means no value
         if (Object.keys(value).length === 0) {
@@ -206,11 +206,14 @@ function SearchableRemoteSelectComponent(attrs: any) {
     let finalValue: any;
 
     if (!value) {
-      finalValue = required ? undefined : (!useSaveLabel ? null : {});
-    } else if (!useSaveLabel) {
-      finalValue = String(value.value).trim();
+      finalValue = required ? undefined : null;
     } else {
-      finalValue = value;
+      // With type: 'json', always store as object for single mode
+      // If saveLabel is false, store minimal object with just value
+      // If saveLabel is true, store full object with label
+      finalValue = !useSaveLabel
+        ? { value: String(value.value).trim() }
+        : { value: String(value.value).trim(), label: value.label };
     }
 
     onChange({
