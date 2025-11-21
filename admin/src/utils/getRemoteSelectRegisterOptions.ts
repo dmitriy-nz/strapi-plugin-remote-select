@@ -187,15 +187,6 @@ export function getRemoteSelectRegisterOptions(type: SelectType): CustomFieldOpt
         },
         items: [
           {
-            name: 'options.select.multi' as any,
-            type: 'checkbox',
-            intlLabel: {
-              id: getTrad('select.multi-label'),
-              defaultMessage: 'Multi mode',
-            },
-            description: getTranslationBySelectType(translationsOptions.multiModeDescription, type),
-          },
-          {
             name: 'required',
             type: 'checkbox' as any,
             intlLabel: {

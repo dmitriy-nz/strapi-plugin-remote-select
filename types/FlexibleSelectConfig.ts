@@ -17,5 +17,5 @@ export interface FlexibleSelectMappingConfig {
 }
 
 export interface FlexibleSelectSelectConfig {
-  multi: boolean;
+  // No configuration needed - multi mode is determined by field type
 }

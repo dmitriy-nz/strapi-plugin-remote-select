@@ -9,9 +9,21 @@ const register = ({ strapi }: { strapi: Core.Strapi }) => {
   });
 
   strapi.customFields.register({
+    name: 'remote-select-multi',
+    plugin: pluginId,
+    type: 'json',
+  });
+
+  strapi.customFields.register({
     name: 'searchable-remote-select',
     plugin: pluginId,
     type: 'text',
+  });
+
+  strapi.customFields.register({
+    name: 'searchable-remote-select-multi',
+    plugin: pluginId,
+    type: 'json',
   });
 };
 

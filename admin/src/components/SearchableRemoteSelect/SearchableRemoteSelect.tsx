@@ -18,8 +18,8 @@ function SearchableRemoteSelectComponent(attrs: any) {
   const [loadingError, setLoadingError] = useState<any>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isMulti = useMemo<boolean>(
-    () => !!selectConfiguration.select?.multi,
-    [selectConfiguration]
+    () => attribute.customField === 'plugin::remote-select.searchable-remote-select-multi',
+    [attribute]
   );
   const valueParsed = useMemo<
     SearchableRemoteSelectValue | SearchableRemoteSelectValue[] | undefined
@@ -29,31 +29,18 @@ function SearchableRemoteSelectComponent(attrs: any) {
     }
 
     if (isMulti) {
-      // Multi mode: value is either JSON string or pre-parsed array
-      let arrayValue: string[];
-
-      if (Array.isArray(value)) {
-        // Already parsed (defensive)
-        arrayValue = value;
-      } else if (typeof value === 'string') {
-        // Parse JSON string
-        try {
-          const parsed = JSON.parse(value);
-          arrayValue = Array.isArray(parsed) ? parsed : [];
-        } catch {
-          return [];
-        }
-      } else {
+      // Multi mode: type 'json' returns actual array
+      if (!Array.isArray(value)) {
         return [];
       }
 
-      // Convert to display objects
-      return arrayValue.map(val => ({
+      // Convert array of strings to display objects
+      return value.map(val => ({
         value: String(val).trim(),
         label: String(val).trim()
       }));
     } else {
-      // Single mode: value is plain string
+      // Single mode: type 'text' returns plain string
       if (typeof value !== 'string') {
         return undefined;
       }
@@ -183,11 +170,11 @@ function SearchableRemoteSelectComponent(attrs: any) {
   }
 
   function writeMultiModel(value?: SearchableRemoteSelectValue[]): void {
-    // Extract values and JSON.stringify for type: 'text'
+    // For type: 'json', store actual array (no stringify)
     const valuesArray = value ? value.map(v => String(v.value).trim()) : [];
     const finalValue = valuesArray.length
-      ? JSON.stringify(valuesArray)
-      : required ? undefined : JSON.stringify([]);
+      ? valuesArray
+      : required ? undefined : [];
 
     onChange({
       target: {
@@ -199,7 +186,7 @@ function SearchableRemoteSelectComponent(attrs: any) {
   }
 
   function writeSingleModel(value?: SearchableRemoteSelectValue): void {
-    // Store plain string for type: 'text'
+    // For type: 'text', store plain string
     const finalValue = value ? String(value.value).trim() : (required ? undefined : null);
 
     onChange({

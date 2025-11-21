@@ -1,7 +1,9 @@
 import { StrapiApp } from '@strapi/strapi/admin';
 import { Initializer } from './components/Initializer';
 import { registerRemoteSelect } from './components/RemoteSelect/registerRemoteSelect';
+import { registerRemoteSelectMulti } from './components/RemoteSelect/registerRemoteSelectMulti';
 import { registerSearchableRemoteSelect } from './components/SearchableRemoteSelect/registerSearchableRemoteSelect';
+import { registerSearchableRemoteSelectMulti } from './components/SearchableRemoteSelect/registerSearchableRemoteSelectMulti';
 import { PLUGIN_ID } from './pluginId';
 import { getTranslation } from './utils/getTranslation';
 
@@ -15,7 +17,9 @@ export default {
     });
 
     registerRemoteSelect(app);
+    registerRemoteSelectMulti(app);
     registerSearchableRemoteSelect(app);
+    registerSearchableRemoteSelectMulti(app);
   },
 
   async registerTrads(app: any) {

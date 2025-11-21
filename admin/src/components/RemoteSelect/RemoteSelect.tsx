@@ -33,8 +33,8 @@ function RemoteSelectComponent({
 
   const { formatMessage } = useIntl();
   const isMulti = useMemo<boolean>(
-    () => !!selectConfiguration.select?.multi,
-    [selectConfiguration]
+    () => attribute.customField === 'plugin::remote-select.remote-select-multi',
+    [attribute]
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [options, setOptions] = useState<Array<SearchableRemoteSelectValue>>([]);
@@ -46,26 +46,14 @@ function RemoteSelectComponent({
     }
 
     if (isMulti) {
-      // Multi mode: value is either JSON string or pre-parsed array
-      if (Array.isArray(value)) {
-        // Already parsed (defensive)
-        return value;
+      // Multi mode: type 'json' returns actual array
+      if (!Array.isArray(value)) {
+        return [];
       }
-
-      if (typeof value === 'string') {
-        // Parse JSON string
-        try {
-          const parsed = JSON.parse(value);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch {
-          return [];
-        }
-      }
-
-      return [];
+      return value;
     }
 
-    // Single mode: plain string
+    // Single mode: type 'text' returns plain string
     return typeof value === 'string' ? value : '';
   }, [value, isMulti]);
 
@@ -103,12 +91,12 @@ function RemoteSelectComponent({
     let finalValue: any;
 
     if (isMulti) {
-      // Multi mode: JSON.stringify array for type: 'text'
+      // Multi mode: type 'json' stores actual array (no stringify)
       const arrayValue = Array.isArray(value) ? value : [];
       const filtered = arrayValue.filter((el) => el !== undefined && el !== null);
-      finalValue = filtered.length ? JSON.stringify(filtered) : (required ? undefined : JSON.stringify([]));
+      finalValue = filtered.length ? filtered : (required ? undefined : []);
     } else {
-      // Single mode: store plain string for type: 'text'
+      // Single mode: type 'text' stores plain string
       finalValue = value ? String(value) : (required ? undefined : null);
     }
 
