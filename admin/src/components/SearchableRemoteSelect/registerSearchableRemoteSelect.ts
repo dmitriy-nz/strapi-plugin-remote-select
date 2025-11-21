@@ -8,7 +8,7 @@ export function registerSearchableRemoteSelect(app: StrapiApp): void {
   app.customFields.register({
     name: 'searchable-remote-select',
     pluginId: pluginId,
-    type: 'text',
+    type: 'json',
     intlLabel: {
       id: getTrad('searchable-remote-select.label'),
       defaultMessage: 'Searchable remote select',

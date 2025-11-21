@@ -245,7 +245,7 @@ function SearchableRemoteSelectComponent(attrs: any) {
         name,
         type: attribute.type,
         value:
-          finalValue && finalValue.length ? JSON.stringify(finalValue) : required ? undefined : JSON.stringify([]),
+          finalValue && finalValue.length ? finalValue : required ? undefined : [],
       },
     });
   }
@@ -254,11 +254,11 @@ function SearchableRemoteSelectComponent(attrs: any) {
     let finalValue: any;
 
     if (!value) {
-      finalValue = required ? undefined : (!useSaveLabel ? null : JSON.stringify({}));
+      finalValue = required ? undefined : (!useSaveLabel ? null : {});
     } else if (!useSaveLabel) {
       finalValue = String(value.value).trim();
     } else {
-      finalValue = JSON.stringify(value);
+      finalValue = value;
     }
 
     onChange({
