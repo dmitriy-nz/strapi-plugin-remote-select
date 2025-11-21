@@ -77,8 +77,8 @@ export const OptionsProxyService = ({ strapi }: { strapi: Core.Strapi }) => ({
    * Parses options from the provided response using the given mapping configuration.
    *
    * @param {any} response - The JSON response to parse and extract options from.
-   * @param  mappingConfig - The configuration defining the paths for extracting values and labels.
-   * @return {SearchableRemoteSelectValue[]} An array of unique options with `value` and `label` properties.
+   * @param  mappingConfig - The configuration defining the paths for extracting values.
+   * @return {SearchableRemoteSelectValue[]} An array of unique options with `value` and `label` properties (label = value).
    */
   parseOptions(
     response: any,
@@ -91,6 +91,7 @@ export const OptionsProxyService = ({ strapi }: { strapi: Core.Strapi }) => ({
 
     /**
      * Filter and map options array to prepare options with value and label.
+     * Label is always set to the same as value (display slug).
      *
      * @param {Array} options - The options array to filter and map.
      * @returns {Array} The prepared options array with value and label.
@@ -106,11 +107,10 @@ export const OptionsProxyService = ({ strapi }: { strapi: Core.Strapi }) => ({
         }
 
         const value = this.getOptionItem(option, mappingConfig.valueJsonPath);
-        const label = this.getOptionItem(option, mappingConfig.labelJsonPath);
 
         return {
           value,
-          label,
+          label: value, // Display value/slug instead of separate label
         };
       });
 

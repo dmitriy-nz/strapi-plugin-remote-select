@@ -154,20 +154,6 @@ export function getRemoteSelectRegisterOptions(type: SelectType): CustomFieldOpt
             },
           },
           {
-            name: 'options.mapping.labelJsonPath' as any,
-            type: 'string',
-            defaultValue: '$',
-            intlLabel: {
-              id: getTrad('basic.labelJsonPath'),
-              defaultMessage: 'JSON path to label for each item object',
-            },
-            description: {
-              id: getTrad('basic.labelJsonPath-note'),
-              defaultMessage:
-                'JSON path to label for each item object.  "$"- here it is the each options item selected from "JSON path to options array"',
-            },
-          },
-          {
             name: 'options.mapping.valueJsonPath' as any,
             type: 'string',
             defaultValue: '$',
@@ -249,7 +235,6 @@ export function getRemoteSelectRegisterOptions(type: SelectType): CustomFieldOpt
           .optional()
           .shape({
             sourceJsonPath: yup.string().optional(),
-            labelJsonPath: yup.string().optional(),
             valueJsonPath: yup.string().optional(),
           })
           .nullable(),

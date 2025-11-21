@@ -9,6 +9,5 @@ export const RemoteSelectFetchOptionsSchema = yup.object().shape({
   mapping: yup.object().shape({
     sourceJsonPath: yup.string().required(),
     valueJsonPath: yup.string().optional(),
-    labelJsonPath: yup.string().optional(),
   }),
 });
