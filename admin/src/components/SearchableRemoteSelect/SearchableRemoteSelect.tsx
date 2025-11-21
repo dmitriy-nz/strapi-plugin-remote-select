@@ -33,6 +33,18 @@ function SearchableRemoteSelectComponent(attrs: any) {
         return [];
       }
 
+      // Handle if value is already an array (Strapi sometimes pre-parses)
+      if (Array.isArray(value)) {
+        if (!useSaveLabel && value.length > 0 && typeof value[0] === 'string') {
+          return value.map(val => {
+            const cleanVal = String(val).trim();
+            return { value: cleanVal, label: cleanVal };
+          });
+        }
+        return value;
+      }
+
+      // Handle if value is a string that needs parsing
       try {
         const parseResult = JSON.parse(value);
         const arrayResult = Array.isArray(parseResult) ? parseResult : [parseResult];
@@ -54,37 +66,54 @@ function SearchableRemoteSelectComponent(attrs: any) {
         return undefined;
       }
 
-      // Handle value-only mode (when saveLabel is false)
-      if (!useSaveLabel) {
-        // If it's a plain string (not JSON), use it directly
-        try {
-          const parsed = JSON.parse(value);
-          // If successfully parsed but empty object, treat as undefined
-          if (typeof parsed === 'object' && !Array.isArray(parsed) && Object.keys(parsed).length === 0) {
-            return undefined;
-          }
-          // If parsed to an object with value/label, return it
-          if (parsed && typeof parsed === 'object' && 'value' in parsed) {
-            return parsed;
-          }
-          // Otherwise treat the original value as a plain string
-          const cleanVal = value.trim();
-          return { value: cleanVal, label: cleanVal };
-        } catch (err) {
-          // Not JSON, treat as plain string value
-          const cleanVal = value.trim();
-          return { value: cleanVal, label: cleanVal };
+      // Handle if value is already an object (Strapi sometimes pre-parses)
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        if ('value' in value) {
+          return value as SearchableRemoteSelectValue;
+        }
+        if (Object.keys(value).length === 0) {
+          return undefined;
         }
       }
 
-      // saveLabel is true, parse JSON object
-      try {
-        const parseResult = JSON.parse(value);
-        const option = Array.isArray(parseResult) ? parseResult[0] : parseResult;
-        return !Object.keys(option).length ? undefined : option;
-      } catch (err) {
+      // Handle value-only mode (when saveLabel is false)
+      if (!useSaveLabel) {
+        // If it's a plain string (not JSON), use it directly
+        if (typeof value === 'string') {
+          try {
+            const parsed = JSON.parse(value);
+            // If successfully parsed but empty object, treat as undefined
+            if (typeof parsed === 'object' && !Array.isArray(parsed) && Object.keys(parsed).length === 0) {
+              return undefined;
+            }
+            // If parsed to an object with value/label, return it
+            if (parsed && typeof parsed === 'object' && 'value' in parsed) {
+              return parsed;
+            }
+            // Otherwise treat the original value as a plain string
+            const cleanVal = value.trim();
+            return { value: cleanVal, label: cleanVal };
+          } catch (err) {
+            // Not JSON, treat as plain string value
+            const cleanVal = value.trim();
+            return { value: cleanVal, label: cleanVal };
+          }
+        }
         return undefined;
       }
+
+      // saveLabel is true, parse JSON object
+      if (typeof value === 'string') {
+        try {
+          const parseResult = JSON.parse(value);
+          const option = Array.isArray(parseResult) ? parseResult[0] : parseResult;
+          return !Object.keys(option).length ? undefined : option;
+        } catch (err) {
+          return undefined;
+        }
+      }
+
+      return undefined;
     }
   }, [value, useSaveLabel, isMulti]);
   const [searchModel, setSearchModel] = useState<string>(
