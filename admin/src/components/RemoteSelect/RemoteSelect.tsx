@@ -41,20 +41,33 @@ function RemoteSelectComponent({
   const [optionsLoadingError, setLoadingError] = useState<any | undefined>();
 
   const valueParsed = useMemo<string | string[]>(() => {
-    if (isMulti) {
-      if (!value) {
-        return [];
-      }
-
-      try {
-        return JSON.parse(value);
-      } catch (err) {
-        return [value];
-      }
+    if (!value) {
+      return isMulti ? [] : '';
     }
 
-    return value;
-  }, [value]);
+    if (isMulti) {
+      // Multi mode: value is either JSON string or pre-parsed array
+      if (Array.isArray(value)) {
+        // Already parsed (defensive)
+        return value;
+      }
+
+      if (typeof value === 'string') {
+        // Parse JSON string
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+
+      return [];
+    }
+
+    // Single mode: plain string
+    return typeof value === 'string' ? value : '';
+  }, [value, isMulti]);
 
   useEffect(() => {
     loadOptions();
@@ -87,14 +100,20 @@ function RemoteSelectComponent({
   }
 
   function handleChange(value?: string | string[]) {
+    let finalValue: any;
+
     if (isMulti) {
-      value = Array.isArray(value) ? value : [];
-      value = value.filter((el) => el !== undefined && el !== null);
-      value = (value as string[]).length ? JSON.stringify(value) : undefined;
+      // Multi mode: JSON.stringify array for type: 'text'
+      const arrayValue = Array.isArray(value) ? value : [];
+      const filtered = arrayValue.filter((el) => el !== undefined && el !== null);
+      finalValue = filtered.length ? JSON.stringify(filtered) : (required ? undefined : JSON.stringify([]));
+    } else {
+      // Single mode: store plain string for type: 'text'
+      finalValue = value ? String(value) : (required ? undefined : null);
     }
 
     onChange({
-      target: { name, type: attribute.type, value: value },
+      target: { name, type: attribute.type, value: finalValue },
     });
   }
 
