@@ -251,16 +251,16 @@ function SearchableRemoteSelectComponent(attrs: any) {
   }
 
   function writeSingleModel(value?: SearchableRemoteSelectValue): void {
-    let finalValue: string | undefined;
+    let finalValue: any;
 
     if (!value) {
-      finalValue = required ? undefined : (!useSaveLabel ? '' : JSON.stringify({}));
+      finalValue = required ? undefined : (!useSaveLabel ? null : JSON.stringify({}));
     } else if (!useSaveLabel) {
       finalValue = String(value.value).trim();
     } else {
       finalValue = JSON.stringify(value);
     }
-    
+
     onChange({
       target: {
         name,
