@@ -1,4 +1,4 @@
-import { Checkbox, Combobox, ComboboxOption, Field, Flex, Tag } from '@strapi/design-system';
+import { Checkbox, Combobox, ComboboxOption, Field, Flex, Tag, Tooltip } from '@strapi/design-system';
 import { Cross } from '@strapi/icons';
 import { debounce } from 'lodash-es';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
@@ -261,7 +261,8 @@ export default function SearchableRemoteSelect(attrs: any) {
     ) : undefined;
 
   return (
-    <Field.Root hint={hint} error={error} id={generatedId} required={required}>
+    <Tooltip.Provider>
+      <Field.Root hint={hint} error={error} id={generatedId} required={required}>
       <Field.Label>{label}</Field.Label>
       <Combobox
         name={name}
@@ -299,5 +300,6 @@ export default function SearchableRemoteSelect(attrs: any) {
       <Field.Error />
       {selectedValuesTags}
     </Field.Root>
+    </Tooltip.Provider>
   );
 }
