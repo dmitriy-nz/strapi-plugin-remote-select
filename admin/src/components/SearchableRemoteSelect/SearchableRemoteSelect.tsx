@@ -21,57 +21,29 @@ function SearchableRemoteSelectComponent(attrs: any) {
     () => !!selectConfiguration.select?.multi,
     [selectConfiguration]
   );
-  const useSaveLabel = useMemo<boolean>(
-    () => !!selectConfiguration.select?.saveLabel,
-    [selectConfiguration]
-  );
   const valueParsed = useMemo<
     SearchableRemoteSelectValue | SearchableRemoteSelectValue[] | undefined
   >(() => {
     if (isMulti) {
-      // Multi mode: expect array from Strapi (type: 'json' auto-parses)
+      // Multi mode: expect array of strings
       if (!value || !Array.isArray(value) || value.length === 0) {
         return [];
       }
 
-      // If saveLabel is false, array contains strings - convert to objects for display
-      if (!useSaveLabel && typeof value[0] === 'string') {
-        return value.map(val => ({
-          value: String(val).trim(),
-          label: String(val).trim()
-        }));
-      }
-
-      // If saveLabel is true, array contains objects
-      return value;
+      // Convert strings to display objects
+      return value.map(val => ({
+        value: String(val).trim(),
+        label: String(val).trim()
+      }));
     } else {
-      // Single mode
-      if (!value) {
+      // Single mode: expect plain string
+      if (!value || typeof value !== 'string') {
         return undefined;
       }
 
-      // If saveLabel is false, value is a plain string
-      if (typeof value === 'string') {
-        return { value: value.trim(), label: value.trim() };
-      }
-
-      // If saveLabel is true, value is an object
-      if (typeof value === 'object' && !Array.isArray(value)) {
-        if ('value' in value) {
-          return {
-            value: String(value.value).trim(),
-            label: value.label ? String(value.label).trim() : String(value.value).trim()
-          };
-        }
-        // Empty object means no value
-        if (Object.keys(value).length === 0) {
-          return undefined;
-        }
-      }
-
-      return undefined;
+      return { value: value.trim(), label: value.trim() };
     }
-  }, [value, useSaveLabel, isMulti]);
+  }, [value, isMulti]);
   const [searchModel, setSearchModel] = useState<string>(
     valueParsed && isSingleParsed(valueParsed) ? valueParsed.label : ''
   );
@@ -191,32 +163,21 @@ function SearchableRemoteSelectComponent(attrs: any) {
   }
 
   function writeMultiModel(value?: SearchableRemoteSelectValue[]): void {
-    const finalValue = !useSaveLabel && value
-      ? value.map(v => String(v.value).trim())
-      : value;
+    // Always store array of value strings
+    const finalValue = value ? value.map(v => String(v.value).trim()) : [];
 
     onChange({
       target: {
         name,
         type: attribute.type,
-        value:
-          finalValue && finalValue.length ? finalValue : required ? undefined : [],
+        value: finalValue.length ? finalValue : required ? undefined : [],
       },
     });
   }
 
   function writeSingleModel(value?: SearchableRemoteSelectValue): void {
-    let finalValue: any;
-
-    if (!value) {
-      finalValue = required ? undefined : null;
-    } else if (!useSaveLabel) {
-      // Store just the value string
-      finalValue = String(value.value).trim();
-    } else {
-      // Store full object with value and label
-      finalValue = { value: String(value.value).trim(), label: value.label };
-    }
+    // Always store just the value string
+    const finalValue = value ? String(value.value).trim() : (required ? undefined : null);
 
     onChange({
       target: {

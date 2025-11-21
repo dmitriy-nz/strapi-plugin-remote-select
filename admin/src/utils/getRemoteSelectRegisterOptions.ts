@@ -209,22 +209,6 @@ export function getRemoteSelectRegisterOptions(type: SelectType): CustomFieldOpt
             },
             description: getTranslationBySelectType(translationsOptions.multiModeDescription, type),
           },
-          ...(type === 'searchable'
-            ? [
-                {
-                  name: 'options.select.saveLabel' as any,
-                  type: 'checkbox' as any,
-                  intlLabel: {
-                    id: getTrad('select.save-label-label'),
-                    defaultMessage: 'Save Label',
-                  },
-                  description: {
-                    id: getTrad('select.save-label-description'),
-                    defaultMessage: 'When enabled, save both value and label. When disabled (default), save only value. Single mode: "val" vs {value, label}. Multi mode: ["val1", "val2"] vs [{value, label}, ...].',
-                  },
-                },
-              ]
-            : []),
           {
             name: 'required',
             type: 'checkbox' as any,
