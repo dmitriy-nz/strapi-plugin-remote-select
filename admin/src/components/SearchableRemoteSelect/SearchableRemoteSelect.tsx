@@ -24,25 +24,19 @@ function SearchableRemoteSelectComponent(attrs: any) {
   const valueParsed = useMemo<
     SearchableRemoteSelectValue | SearchableRemoteSelectValue[] | undefined
   >(() => {
-    if (isMulti) {
-      // Multi mode: expect array of strings
-      if (!value || !Array.isArray(value) || value.length === 0) {
-        return [];
-      }
-
-      // Convert strings to display objects
-      return value.map(val => ({
-        value: String(val).trim(),
-        label: String(val).trim()
-      }));
-    } else {
-      // Single mode: expect plain string
-      if (!value || typeof value !== 'string') {
-        return undefined;
-      }
-
-      return { value: value.trim(), label: value.trim() };
+    // Both single and multi mode expect arrays (type: 'json' requirement)
+    if (!value || !Array.isArray(value) || value.length === 0) {
+      return isMulti ? [] : undefined;
     }
+
+    // Convert array of strings to display objects
+    const displayValues = value.map(val => ({
+      value: String(val).trim(),
+      label: String(val).trim()
+    }));
+
+    // For single mode, return first item; for multi mode, return all
+    return isMulti ? displayValues : displayValues[0];
   }, [value, isMulti]);
   const [searchModel, setSearchModel] = useState<string>(
     valueParsed && isSingleParsed(valueParsed) ? valueParsed.label : ''
@@ -176,8 +170,8 @@ function SearchableRemoteSelectComponent(attrs: any) {
   }
 
   function writeSingleModel(value?: SearchableRemoteSelectValue): void {
-    // Always store just the value string
-    const finalValue = value ? String(value.value).trim() : (required ? undefined : null);
+    // Store as single-item array for type: 'json' compatibility
+    const finalValue = value ? [String(value.value).trim()] : (required ? undefined : []);
 
     onChange({
       target: {
