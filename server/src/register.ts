@@ -11,7 +11,7 @@ const register = ({ strapi }: { strapi: Core.Strapi }) => {
   strapi.customFields.register({
     name: 'searchable-remote-select',
     plugin: pluginId,
-    type: 'json',
+    type: 'text',
   });
 };
 
