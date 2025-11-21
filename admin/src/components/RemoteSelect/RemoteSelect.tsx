@@ -4,13 +4,16 @@ import {
   MultiSelectOption,
   SingleSelect,
   SingleSelectOption,
+  DesignSystemProvider,
+  useDesignSystem,
 } from '@strapi/design-system';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useTheme } from 'styled-components';
 import { FlexibleSelectConfig } from '../../../../types/FlexibleSelectConfig';
 import { SearchableRemoteSelectValue } from '../../../../types/SearchableRemoteSelectValue';
 
-export default function RemoteSelect({
+function RemoteSelectComponent({
   value,
   onChange,
   name,
@@ -138,5 +141,16 @@ export default function RemoteSelect({
       <Field.Error />
       <Field.Hint />
     </Field.Root>
+  );
+}
+
+export default function RemoteSelect(props: any) {
+  const theme = useTheme();
+  const designSystem = useDesignSystem('RemoteSelect');
+
+  return (
+    <DesignSystemProvider locale={designSystem?.locale || 'en'} theme={theme}>
+      <RemoteSelectComponent {...props} />
+    </DesignSystemProvider>
   );
 }

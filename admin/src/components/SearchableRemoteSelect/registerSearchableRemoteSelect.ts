@@ -19,7 +19,7 @@ export function registerSearchableRemoteSelect(app: StrapiApp): void {
     },
     icon: SearchableRemoteSelectInputIcon,
     components: {
-      Input: async () => import(/* webpackChunkName: "RemoteSelect" */ './SearchableRemoteSelect'),
+      Input: async () => import(/* webpackChunkName: "SearchableRemoteSelect" */ './SearchableRemoteSelect'),
     },
     options: getRemoteSelectRegisterOptions('searchable'),
   });

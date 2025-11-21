@@ -1,12 +1,13 @@
-import { Checkbox, Combobox, ComboboxOption, Field, Flex, Tag } from '@strapi/design-system';
+import { Checkbox, Combobox, ComboboxOption, Field, Flex, Tag, DesignSystemProvider, useDesignSystem } from '@strapi/design-system';
 import { Cross } from '@strapi/icons';
 import { debounce } from 'lodash-es';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useTheme } from 'styled-components';
 import { FlexibleSelectConfig } from '../../../../types/FlexibleSelectConfig';
 import { SearchableRemoteSelectValue } from '../../../../types/SearchableRemoteSelectValue';
 
-export default function SearchableRemoteSelect(attrs: any) {
+function SearchableRemoteSelectComponent(attrs: any) {
   const { name, error, hint, onChange, value, label, attribute, required } = attrs;
 
   const selectConfiguration: FlexibleSelectConfig = attribute.options;
@@ -299,5 +300,16 @@ export default function SearchableRemoteSelect(attrs: any) {
       <Field.Error />
       {selectedValuesTags}
     </Field.Root>
+  );
+}
+
+export default function SearchableRemoteSelect(props: any) {
+  const theme = useTheme();
+  const designSystem = useDesignSystem('SearchableRemoteSelect');
+
+  return (
+    <DesignSystemProvider locale={designSystem?.locale || 'en'} theme={theme}>
+      <SearchableRemoteSelectComponent {...props} />
+    </DesignSystemProvider>
   );
 }
