@@ -4,7 +4,6 @@ import {
   MultiSelectOption,
   SingleSelect,
   SingleSelectOption,
-  TooltipProvider,
 } from '@strapi/design-system';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -117,8 +116,7 @@ export default function RemoteSelect({
   const SelectToRender = isMulti ? MultiSelect : SingleSelect;
 
   return (
-    <TooltipProvider>
-      <Field.Root name={name} hint={hint} required={required} error={error}>
+    <Field.Root name={name} hint={hint} required={required} error={error}>
       <Field.Label>{label}</Field.Label>
       <SelectToRender
         withTags={isMulti}
@@ -140,6 +138,5 @@ export default function RemoteSelect({
       <Field.Error />
       <Field.Hint />
     </Field.Root>
-    </TooltipProvider>
   );
 }
