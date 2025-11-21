@@ -39,7 +39,10 @@ function SearchableRemoteSelectComponent(attrs: any) {
 
         // If saveLabel is disabled and we have strings, convert to objects for display
         if (!useSaveLabel && arrayResult.length > 0 && typeof arrayResult[0] === 'string') {
-          return arrayResult.map(val => ({ value: String(val), label: String(val) }));
+          return arrayResult.map(val => {
+            const cleanVal = String(val).trim();
+            return { value: cleanVal, label: cleanVal };
+          });
         }
 
         return arrayResult;
@@ -65,10 +68,12 @@ function SearchableRemoteSelectComponent(attrs: any) {
             return parsed;
           }
           // Otherwise treat the original value as a plain string
-          return { value: value, label: value };
+          const cleanVal = value.trim();
+          return { value: cleanVal, label: cleanVal };
         } catch (err) {
           // Not JSON, treat as plain string value
-          return { value: value, label: value };
+          const cleanVal = value.trim();
+          return { value: cleanVal, label: cleanVal };
         }
       }
 
@@ -185,22 +190,25 @@ function SearchableRemoteSelectComponent(attrs: any) {
   }
 
   function isInModel(option: SearchableRemoteSelectValue): boolean {
-    return (
-      !!valueParsed &&
-      isMultiParsed(valueParsed) &&
-      valueParsed.some((o) => String(o.value) === String(option.value))
-    );
+    if (!valueParsed || !isMultiParsed(valueParsed)) {
+      return false;
+    }
+
+    // Normalize both values for comparison
+    const optionValue = String(option.value).trim();
+    return valueParsed.some((o) => String(o.value).trim() === optionValue);
   }
 
   function removeFromModel(option: SearchableRemoteSelectValue): void {
     if (!!valueParsed && isMultiParsed(valueParsed)) {
-      writeMultiModel(valueParsed.filter((o) => String(o.value) !== String(option.value)));
+      const optionValue = String(option.value).trim();
+      writeMultiModel(valueParsed.filter((o) => String(o.value).trim() !== optionValue));
     }
   }
 
   function writeMultiModel(value?: SearchableRemoteSelectValue[]): void {
     const finalValue = !useSaveLabel && value
-      ? value.map(v => String(v.value))
+      ? value.map(v => String(v.value).trim())
       : value;
 
     onChange({
@@ -219,7 +227,7 @@ function SearchableRemoteSelectComponent(attrs: any) {
     if (!value) {
       finalValue = required ? undefined : (!useSaveLabel ? '' : JSON.stringify({}));
     } else if (!useSaveLabel) {
-      finalValue = String(value.value);
+      finalValue = String(value.value).trim();
     } else {
       finalValue = JSON.stringify(value);
     }
