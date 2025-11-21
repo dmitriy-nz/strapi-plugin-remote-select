@@ -29,86 +29,39 @@ function SearchableRemoteSelectComponent(attrs: any) {
     SearchableRemoteSelectValue | SearchableRemoteSelectValue[] | undefined
   >(() => {
     if (isMulti) {
-      if (!value || value === 'null') {
+      // Multi mode: expect array from Strapi (type: 'json' auto-parses)
+      if (!value || !Array.isArray(value) || value.length === 0) {
         return [];
       }
 
-      // Handle if value is already an array (Strapi sometimes pre-parses)
-      if (Array.isArray(value)) {
-        if (!useSaveLabel && value.length > 0 && typeof value[0] === 'string') {
-          return value.map(val => {
-            const cleanVal = String(val).trim();
-            return { value: cleanVal, label: cleanVal };
-          });
-        }
-        return value;
+      // If saveLabel is false, array contains strings - convert to objects for display
+      if (!useSaveLabel && typeof value[0] === 'string') {
+        return value.map(val => ({
+          value: String(val).trim(),
+          label: String(val).trim()
+        }));
       }
 
-      // Handle if value is a string that needs parsing
-      try {
-        const parseResult = JSON.parse(value);
-        const arrayResult = Array.isArray(parseResult) ? parseResult : [parseResult];
-
-        // If saveLabel is disabled and we have strings, convert to objects for display
-        if (!useSaveLabel && arrayResult.length > 0 && typeof arrayResult[0] === 'string') {
-          return arrayResult.map(val => {
-            const cleanVal = String(val).trim();
-            return { value: cleanVal, label: cleanVal };
-          });
-        }
-
-        return arrayResult;
-      } catch (err) {
-        return [];
-      }
+      // If saveLabel is true, array contains objects
+      return value;
     } else {
+      // Single mode
       if (!value) {
         return undefined;
       }
 
-      // Handle if value is already an object (Strapi sometimes pre-parses)
-      if (typeof value === 'object' && !Array.isArray(value)) {
+      // If saveLabel is false, value is a plain string
+      if (!useSaveLabel && typeof value === 'string') {
+        return { value: value.trim(), label: value.trim() };
+      }
+
+      // If saveLabel is true, value is an object
+      if (useSaveLabel && typeof value === 'object' && !Array.isArray(value)) {
         if ('value' in value) {
           return value as SearchableRemoteSelectValue;
         }
+        // Empty object means no value
         if (Object.keys(value).length === 0) {
-          return undefined;
-        }
-      }
-
-      // Handle value-only mode (when saveLabel is false)
-      if (!useSaveLabel) {
-        // If it's a plain string (not JSON), use it directly
-        if (typeof value === 'string') {
-          try {
-            const parsed = JSON.parse(value);
-            // If successfully parsed but empty object, treat as undefined
-            if (typeof parsed === 'object' && !Array.isArray(parsed) && Object.keys(parsed).length === 0) {
-              return undefined;
-            }
-            // If parsed to an object with value/label, return it
-            if (parsed && typeof parsed === 'object' && 'value' in parsed) {
-              return parsed;
-            }
-            // Otherwise treat the original value as a plain string
-            const cleanVal = value.trim();
-            return { value: cleanVal, label: cleanVal };
-          } catch (err) {
-            // Not JSON, treat as plain string value
-            const cleanVal = value.trim();
-            return { value: cleanVal, label: cleanVal };
-          }
-        }
-        return undefined;
-      }
-
-      // saveLabel is true, parse JSON object
-      if (typeof value === 'string') {
-        try {
-          const parseResult = JSON.parse(value);
-          const option = Array.isArray(parseResult) ? parseResult[0] : parseResult;
-          return !Object.keys(option).length ? undefined : option;
-        } catch (err) {
           return undefined;
         }
       }
@@ -191,8 +144,7 @@ function SearchableRemoteSelectComponent(attrs: any) {
   function handleTextValueChange(val: string): void {
     setSearchModel(val);
     if (valueParsed && isSingleParsed(valueParsed)) {
-      const currentLabel = !useSaveLabel && typeof value === 'string' ? value : valueParsed.label;
-      if (currentLabel !== val) {
+      if (valueParsed.label !== val) {
         handleChange(undefined);
       }
     }
