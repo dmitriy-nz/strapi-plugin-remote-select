@@ -220,7 +220,7 @@ export function getRemoteSelectRegisterOptions(type: SelectType): CustomFieldOpt
                   },
                   description: {
                     id: getTrad('select.save-label-description'),
-                    defaultMessage: 'When enabled, save both value and label. When disabled (default), save only value. Single mode: string vs JSON object. Multi mode: JSON array of strings vs JSON array of objects.',
+                    defaultMessage: 'When enabled, save both value and label. When disabled (default), save only value. Single mode: string vs JSON object. Multi mode: array of strings vs JSON array of objects.',
                   },
                 },
               ]
