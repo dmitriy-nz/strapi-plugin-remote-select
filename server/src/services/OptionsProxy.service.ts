@@ -1,5 +1,6 @@
 import { Core } from '@strapi/strapi';
 import { query } from 'jsonpath';
+import template from 'lodash/template';
 import type { FlexibleSelectMappingConfig } from '../../../types/FlexibleSelectConfig';
 import type { RemoteSelectFetchOptions } from '../../../types/RemoteSelectFetchOptions';
 import { RemoteSelectPluginOptions } from '../../../types/RemoteSelectPluginOptions';
@@ -17,10 +18,10 @@ export const OptionsProxyService = ({ strapi }: { strapi: Core.Strapi }) => ({
   async getOptionsByConfig(config: RemoteSelectFetchOptions) {
     const fetchOptions = {
       method: config.fetch.method,
-      headers: this.parseStringHeaders(config.fetch.headers)
-    }
+      headers: this.parseStringHeaders(config.fetch.headers),
+    };
 
-    if(config.fetch.method !== 'GET' && config.fetch.body) {
+    if (config.fetch.method !== 'GET' && config.fetch.body) {
       fetchOptions['body'] = this.replaceVariables(config.fetch.body);
     }
 
@@ -105,7 +106,7 @@ export const OptionsProxyService = ({ strapi }: { strapi: Core.Strapi }) => ({
         }
 
         const value = this.getOptionItem(option, mappingConfig.valueJsonPath);
-        const label = this.getOptionItem(option, mappingConfig.labelJsonPath);
+        const label = this.getOptionLabel(option, mappingConfig.labelJsonPath);
 
         return {
           value,
@@ -128,6 +129,44 @@ export const OptionsProxyService = ({ strapi }: { strapi: Core.Strapi }) => ({
      * Convert Map to array of unique values
      */
     return Array.from(uniqueValuesOptionsMap.values());
+  },
+
+  /**
+   * Retrieves the label of an option from a JSON object.
+   * Supports both JSON path extraction and lodash template syntax for composing labels from multiple fields.
+   *
+   * Template syntax uses lodash templates with <%= %> delimiters.
+   * Example: "<%= title %> - <%= category %>" will combine title and category fields.
+   *
+   * If the jsonPath doesn't contain template delimiters, it's treated as a regular JSON path.
+   *
+   * @param {any} rawOption - The JSON object from which to extract the label.
+   * @param {string} jsonPath - The JSON path or lodash template string to generate the label. Defaults to "$" (root object).
+   *
+   * @return {string} The generated label as a string.
+   */
+  getOptionLabel(rawOption: any, jsonPath?: string): string {
+    const pathOrTemplate = jsonPath || '$';
+
+    // Check if the jsonPath contains lodash template syntax
+    if (pathOrTemplate.includes('<%') && pathOrTemplate.includes('%>')) {
+      try {
+        // Compile and execute the lodash template with the option object as context
+        const templateExecutor = template(pathOrTemplate);
+        console.log(rawOption);
+        return templateExecutor(rawOption);
+      } catch (error) {
+        // If template compilation fails, fall back to treating it as a JSON path
+        strapi.log.warn(
+          `Failed to compile lodash template for labelJsonPath: ${pathOrTemplate}`,
+          error
+        );
+        return this.getOptionItem(rawOption, pathOrTemplate);
+      }
+    }
+
+    // If no template syntax detected, use the standard JSON path extraction
+    return this.getOptionItem(rawOption, pathOrTemplate);
   },
 
   /**
