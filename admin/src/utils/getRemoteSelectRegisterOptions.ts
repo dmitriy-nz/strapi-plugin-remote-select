@@ -179,7 +179,7 @@ export function getRemoteSelectRegisterOptions(
             description: {
               id: getTrad("basic.labelJsonPath-note"),
               defaultMessage:
-                'JSON path to label for each item object.  "$"- here it is the each options item selected from "JSON path to options array"',
+                'JSON path or lodash template to generate label. Use JSON path (e.g., "$.title") to extract a single field, or lodash template syntax to combine multiple fields (e.g., "<%= title %> - <%= category %>"). "$" represents each option item selected from "JSON path to options array".',
             },
           },
           {

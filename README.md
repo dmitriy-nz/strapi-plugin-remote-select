@@ -23,7 +23,6 @@ Simply transferring the value is not an option, as the values can change dynamic
 and the native Select has the same value as the one displayed to the user, which is not always convenient.
 That's why I was inspired to create this module, which solves this problem, you just need to add the desired input and configure it and that's it, you will always get the latest options, and the ability to use the searchable API or auto-complete significantly expands the use cases for this module.
 
-
 ## ⚠️ Requirements
 
 `"node": ">=18.0.0 <=20.x.x"`
@@ -54,6 +53,8 @@ Each input select that this plugin adds has a similar configuration:
 
 ### Basic settings
 
+Note on labels: You can now generate option labels either by extracting a single field via JSONPath or by composing multiple fields using lodash template syntax. See the table below and examples afterward.
+
 Module is using JSON path for allow configurable way to get an option array, label, and value for options objects. Learn more about [JSON path here](https://github.com/dchester/jsonpath)
 
 | Field name                              | Type     | Description                                                                                                          |
@@ -63,7 +64,7 @@ Module is using JSON path for allow configurable way to get an option array, lab
 | Fetch options request body              | `string` | HTTP body for requesting options. Provide a your custom body for options fetching.                                   |
 | Fetch options request custom headers    | `string` | Custom fetch options request headers in raw format, one header per line. For example: Content-type: application/json |
 | JSON path to options array              | `string` | `$` - here it is the body answer to the options request                                                              |
-| JSON path to label for each item object | `string` | `$` - here it is the each options item selected from "JSON path to options array"                                    |
+| JSON path to label for each item object | `string` | JSON path or lodash template to generate label. Use JSON path (e.g., `$.title`) to extract a single field, or lodash template syntax to combine multiple fields (e.g., `<%= title %> - <%= category %>`). `$` represents each option item selected from "JSON path to options array" |
 | JSON path to value for each item object | `string` | `$` - here it is the each options item selected from "JSON path to options array"                                    |
 
 Advanced settings:
@@ -141,14 +142,17 @@ for example, let's consider the next api endpoint 'https://dummyjson.com/product
       "discountPercentage": 5.5,
       "rating": 3.28,
       "stock": 44
-    },
-    ...
-  ]
+    }
+   ]
 }
 ```
 
 Configured remote select window will look like that:
-_We are going to use `id` field from a product object as value and `title` field as label_
+_We are going to use `id` field from a product object as value and `title` field as label_.
+
+Label examples:
+- JSONPath: set label path to `$.title`
+- Lodash template: set label path to `<%= title %> - <%= category %>`
 
 ![Remote select example configured settings window](https://github.com/dmitriy-nz/strapi-plugin-remote-select/raw/main/screenshots/remote-select-configured-window.png)
 
