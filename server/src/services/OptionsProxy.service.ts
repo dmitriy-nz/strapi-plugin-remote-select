@@ -153,7 +153,6 @@ export const OptionsProxyService = ({ strapi }: { strapi: Core.Strapi }) => ({
       try {
         // Compile and execute the lodash template with the option object as context
         const templateExecutor = template(pathOrTemplate);
-        console.log(rawOption);
         return templateExecutor(rawOption);
       } catch (error) {
         // If template compilation fails, fall back to treating it as a JSON path
